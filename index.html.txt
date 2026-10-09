@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gurme Döner - QR Menü Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <style>
+    :root {
+      --bg-color: #101412;
+      --card-bg: #1a221e;
+      --primary-orange: #ff6b00;
+      --primary-green: #2ecc71;
+      --text-color: #f5f5f5;
+      --text-muted: #a0a0a0;
+      --border-color: #27332c;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-color); padding-bottom: 90px; }
+
+    /* Top Announcement Banner */
+    .announcement-bar {
+      background: linear-gradient(90deg, #ff6b00, #e65c00);
+      color: #fff;
+      font-size: 0.8rem;
+      padding: 8px 12px;
+      text-align: center;
+      font-weight: 600;
+      display: none;
+    }
+
+    /* Header */
+    header {
+      background: linear-gradient(180deg, #18241d 0%, #101412 100%);
+      padding: 20px 16px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .brand-title { font-size: 1.8rem; font-weight: 700; }
+    .brand-title span { color: var(--primary-orange); }
+    .brand-subtitle { font-size: 0.8rem; color: var(--primary-green); margin-top: 4px; font-weight: 500; }
+
+    /* Search & Filter Bar */
+    .controls-container { max-width: 600px; margin: 0 auto; padding: 12px 16px; }
+    .search-input {
+      width: 100%;
+      padding: 12px 18px;
+      border-radius: 30px;
+      border: 1px solid var(--border-color);
+      background: var(--card-bg);
+      color: #fff;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .search-input:focus { border-color: var(--primary-orange); }
+
+    /* Categories */
+    .categories {
+      display: flex; gap: 8px; overflow-x: auto;
+      padding: 4px 16px 12px 16px; max-width: 600px; margin: 0 auto;
+      scrollbar-width: none;
+    }
+    .categories::-webkit-scrollbar { display: none; }
+    .cat-btn {
+      background: var(--card-bg); color: var(--text-muted);
+      border: 1px solid var(--border-color); padding: 8px 16px;
+      border-radius: 20px; white-space: nowrap; font-size: 0.8rem;
+      font-weight: 600; cursor: pointer; transition: all 0.3s;
+    }
+    .cat-btn.active { background: var(--primary-orange); color: #fff; border-color: var(--primary-orange); }
+
+    /* Menu Container */
+    .menu-container { max-width: 600px; margin: 0 auto; padding: 0 16px; display: flex; flex-direction: column; gap: 14px; }
+
+    /* Product Card */
+    .product-card {
+      background: var(--card-bg); border-radius: 16px; overflow: hidden;
+      display: flex; border: 1px solid var(--border-color); cursor: pointer;
+      transition: transform 0.2s;
+    }
+    .product-card:active { transform: scale(0.98); }
+    .product-img { width: 110px; height: 110px; object-fit: cover; }
+    .product-info { padding: 12px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .product-title { font-size: 0.95rem; font-weight: 600; }
+    .product-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 4px; line-height: 1.3; }
+    
+    .product-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; }
+    .price { font-size: 1.1rem; font-weight: 700; color: var(--primary-orange); }
+    .price-hidden { display: none !important; }
+
+    .badges { display: flex; gap: 4px; flex-wrap: wrap; }
+    .badge-item {
+      background: rgba(46, 204, 113, 0.15); color: var(--primary-green);
+      padding: 2px 6px; border-radius: 8px; font-size: 0.65rem; font-weight: 600;
+    }
+
+    /* Modal / Popup */
+    .modal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.85); z-index: 1000; align-items: center; justify-content: center; padding: 16px;
+    }
+    .modal-content {
+      background: var(--card-bg); border-radius: 20px; max-width: 500px; width: 100%;
+      overflow: hidden; border: 1px solid var(--border-color); max-height: 90vh; overflow-y: auto;
+    }
+    .modal-img { width: 100%; height: 220px; object-fit: cover; }
+    .modal-body { padding: 20px; }
+    .modal-close { float: right; font-size: 1.5rem; color: #fff; cursor: pointer; }
+
+    /* Sticky Footer Bar */
+    .bottom-bar {
+      position: fixed; bottom: 0; left: 0; right: 0;
+      background: #141c17; border-top: 1px solid var(--border-color);
+      display: flex; justify-content: space-around; padding: 10px 0; z-index: 100;
+    }
+    .action-btn {
+      color: var(--text-color); text-decoration: none; font-size: 0.7rem;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .action-btn i { font-size: 1.2rem; color: var(--primary-green); }
+    .action-btn.waiter i { color: var(--primary-orange); }
+  </style>
+</head>
+<body>
+
+  <div id="announcementBar" class="announcement-bar"></div>
+
+  <header>
+    <div class="brand-title">GURME <span>DÖNER</span></div>
+    <div class="brand-subtitle">🌿 Hakiki Yaprak Döner & Özel Tarifler</div>
+  </header>
+
+  <div class="controls-container">
+    <input type="text" id="searchInput" class="search-input" placeholder="Yemek, içecek veya malzeme ara..." onkeyup="filterMenu()">
+  </div>
+
+  <div class="categories" id="categoryContainer"></div>
+
+  <div class="menu-container" id="menuContainer"></div>
+
+  <!-- Detay Modalı -->
+  <div class="modal" id="productModal">
+    <div class="modal-content">
+      <img id="modalImg" class="modal-img" src="" alt="">
+      <div class="modal-body">
+        <span class="modal-close" onclick="closeModal()">&times;</span>
+        <h2 id="modalTitle"></h2>
+        <p id="modalDesc" style="color:var(--text-muted); font-size:0.85rem; margin:10px 0;"></p>
+        <div id="modalMeta" style="margin-top:15px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dinamik Alt Menü -->
+  <div class="bottom-bar" id="bottomBar"></div>
+
+  <script>
+    // GOOGLE SHEETS CSV LINKI BURAYA EKLENECEK
+    const sheetCsvUrl = 'YOUR_GOOGLE_SHEETS_CSV_URL_HERE';
+
+    let config = {
+      fiyatLariGoster: true,
+      garsonCagirAktif: true,
+      whatsappNo: '',
+      googleYorum: '',
+      instagram: ''
+    };
+
+    let products = [];
+
+    // Verileri Yükle
+    async function init() {
+      // Örnek Demolar (Google Sheets Baglanana Kadar)
+      products = [
+        { kategori: 'Dürüm', urun_adi: 'Yaprak Et Döner Dürüm', aciklama: 'Özel sos, amasya et, turşu, domates', fiyat: '180 ₺', gorsel_url: 'https://images.unsplash.com/photo-1561651823-34feb02250e4', kalori: '650 kcal', etiket: 'En Çok Satan', alerjen: 'Gluten' },
+        { kategori: 'Porsiyon', urun_adi: 'İskender Döner', aciklama: 'Tereyağlı pide, özel sos, manda yoğurdu', fiyat: '260 ₺', gorsel_url: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783', kalori: '850 kcal', etiket: 'Şefin İmzası', alerjen: 'Süt, Gluten' }
+      ];
+
+      renderCategories();
+      renderMenu(products);
+      renderBottomBar();
+    }
+
+    function renderCategories() {
+      const cats = ['Tümü', ...new Set(products.map(p => p.kategori))];
+      document.getElementById('categoryContainer').innerHTML = cats.map((c, i) => `
+        <button class="cat-btn ${i===0?'active':''}" onclick="filterCat('${c}', this)">${c}</button>
+      `).join('');
+    }
+
+    function renderMenu(list) {
+      const container = document.getElementById('menuContainer');
+      container.innerHTML = list.map(p => `
+        <div class="product-card" onclick="openModal('${p.urun_adi}')">
+          <img src="${p.gorsel_url}" class="product-img">
+          <div class="product-info">
+            <div>
+              <div class="product-title">${p.urun_adi}</div>
+              <div class="product-desc">${p.aciklama}</div>
+            </div>
+            <div class="product-meta">
+              <div class="price ${config.fiyatLariGoster ? '' : 'price-hidden'}">${p.fiyat}</div>
+              <div class="badges">
+                ${p.kalori ? `<span class="badge-item"><i class="fa-solid fa-fire"></i> ${p.kalori}</span>` : ''}
+              </div>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function filterCat(cat, btn) {
+      document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      if(cat === 'Tümü') renderMenu(products);
+      else renderMenu(products.filter(p => p.kategori === cat));
+    }
+
+    function openModal(name) {
+      const p = products.find(item => item.urun_adi === name);
+      if(!p) return;
+      document.getElementById('modalImg').src = p.gorsel_url;
+      document.getElementById('modalTitle').innerText = p.urun_adi;
+      document.getElementById('modalDesc').innerText = p.aciklama;
+      document.getElementById('modalMeta').innerHTML = `
+        <p><strong>Kalori:</strong> ${p.kalori || 'Belirtilmedi'}</p>
+        <p style="margin-top:5px;"><strong>Alerjenler:</strong> ${p.alerjen || 'Yok'}</p>
+        <h3 style="color:var(--primary-orange); margin-top:15px; ${config.fiyatLariGoster ? '' : 'display:none;'}">${p.fiyat}</h3>
+      `;
+      document.getElementById('productModal').style.display = 'flex';
+    }
+
+    function closeModal() { document.getElementById('productModal').style.display = 'none'; }
+
+    function renderBottomBar() {
+      document.getElementById('bottomBar').innerHTML = `
+        <a href="#" class="action-btn"><i class="fa-solid fa-location-dot"></i>Yol Tarifi</a>
+        ${config.garsonCagirAktif ? `<a href="https://wa.me/${config.whatsappNo}?text=Masa%20Hesap%20/ %20Garson%20Istiyor" class="action-btn waiter"><i class="fa-solid fa-bell"></i>Garson Çağır</a>` : ''}
+        <a href="#" class="action-btn"><i class="fa-solid fa-star"></i>Yorum Yap</a>
+      `;
+    }
+
+    init();
+  </script>
+</body>
+</html>
